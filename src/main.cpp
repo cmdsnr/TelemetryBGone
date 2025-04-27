@@ -3,7 +3,7 @@
 #include "../include/useful.h"
 
 int Test() {
-	std::cout << "Test Function Triggered" << std::endl; 
+	std::cout << "Not Available yet." << std::endl; 
 	return 0;
 }
 
