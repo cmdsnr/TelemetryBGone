@@ -2,47 +2,102 @@
 #include <iostream>
 #include "../include/useful.h"
 
-int Test() {
-	std::cout << "Not Available yet." << std::endl; 
-	return 0;
+int Test()
+{
+    std::cout << "Not Available yet." << std::endl;
+    return 0;
 }
 
-void Prepare() {
-	/*
-	Closes all software only focusing on system based telemetry
-	*/
-	char confirm;
-	std::cout << "All current running processes will be shutdown in order to properly block potential telemetry.\nMake sure you save anything you might need before confirming.\n Begin? (y/N)";
-	std::cin >> confirm;
+void Prepare()
+{
+    /*
+        Closes all non-system processes before beginning
+        telemetry inspection and firewall rule creation.
+    */
 
-	if (confirm == 'y') {
-	ManageProcessShutDown();
-	Sleep(10000); // sleep 10 seconds before starting
-	RecordNames_All();
-	}
+    char confirm = 'n';
+
+    std::cout << "\n[!] WARNING\n";
+    std::cout << "All current running processes will be shutdown\n"
+              << "in order to properly block potential telemetry.\n"
+              << "Make sure you save anything important.\n\n"
+              << "Begin? (y/N): ";
+
+    std::cin >> confirm;
+
+    if (confirm == 'y' || confirm == 'Y')
+    {
+        std::cout << "\n[+] Shutting down processes...\n";
+        ManageProcessShutDown();
+
+        std::cout << "[+] Waiting 10 seconds before analysis...\n";
+        Sleep(10000);
+
+        std::cout << "[+] Collecting and analyzing DNS records...\n";
+        RecordNames_All();
+
+        std::cout << "[+] Operation complete.\n";
+    }
+    else
+    {
+        std::cout << "\n[-] Operation cancelled.\n";
+    }
 }
 
-void Handler() {
-	int UInput;
-	std::cout << "Choose An Option Below. (Use Numbers to select option)" << "\n0. Exit\n1. Telemetry (Windows Telemetry Only)\n2. Advanced Telemetry\n3.Undo All Telemetry\nElse Default.\n";
-	while (1) {
-		std::cin >> UInput;
-		switch (UInput) {
-		case 0:
-			exit(0);
-		case 1:
-			Prepare();
-			break;
-		case 2:
-			Test();
-		case 3:
-			UndoManageTraffic();
-		default:
-			std::cout << "Not An Option." << std::endl;
-		}
-	}
+void Handler()
+{
+    int UInput = -1;
+
+    while (true)
+    {
+        std::cout << "\n==============================\n";
+        std::cout << "   TelemetryBGone - Menu\n";
+        std::cout << "==============================\n";
+        std::cout << "0. Exit\n";
+        std::cout << "1. Telemetry (Windows Only)\n";
+        std::cout << "2. Advanced Telemetry\n";
+        std::cout << "3. Undo All Telemetry\n";
+        std::cout << "Select option: ";
+
+        std::cin >> UInput;
+
+        if (!std::cin)
+        {
+            std::cin.clear();
+            std::cin.ignore(10000, '\n');
+            std::cout << "\n[!] Invalid input.\n";
+            continue;
+        }
+
+        switch (UInput)
+        {
+        case 0:
+            std::cout << "\nExiting...\n";
+            return;
+
+        case 1:
+            Prepare();
+            break;
+
+        case 2:
+            Test();
+            break;
+
+        case 3:
+            std::cout << "\n[+] Restoring firewall rules...\n";
+            UndoManageTraffic();
+            std::cout << "[+] Undo complete.\n";
+            break;
+
+        default:
+            std::cout << "\n[!] Not a valid option.\n";
+            break;
+        }
+    }
 }
 
-int main() {
-	Handler();
+int main()
+{
+    Handler();
+    return 0;
 }
