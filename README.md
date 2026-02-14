@@ -127,29 +127,15 @@ The tool:
 7. Log blocked record
 8. Provide undo option to restore rules
 
----
+----------
 
-## Skills Demonstrated
+## Linux Edition
 
-- Windows API programming
-- Low-level networking inspection
-- COM interface interaction
-- Firewall rule management
-- Process enumeration
-- Memory management (BSTR handling, heap allocation)
-- TCP table inspection
-- DNS resolution handling
-- Structured C++ systems programming
+The Linux version is implemented using:
 
----
+- Python 3 for networking inspection and record tracking
+- Bash helper script for firewall rule management
+- `ss` for socket inspection
+- `iptables` for outbound traffic control
 
-## Technologies Used
-
-- C++
-- Win32 API
-- IP Helper API
-- WinDNS
-- Windows Firewall COM API
-- ToolHelp32 Snapshot API
-
----
+This version demonstrates Linux systems familiarity and scripting integration.
