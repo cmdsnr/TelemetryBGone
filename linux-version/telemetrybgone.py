@@ -3,15 +3,12 @@
 import subprocess
 import socket
 import os
-import sys
 
 BLOCK_FILE = "blocked_records_linux.txt"
+HELPER_SCRIPT = "./firewall_helper.sh"
 
 
 def get_active_connections():
-    """
-    Uses ss to retrieve active TCP connections.
-    """
     result = subprocess.run(
         ["ss", "-tnp"],
         capture_output=True,
@@ -21,9 +18,6 @@ def get_active_connections():
 
 
 def resolve_host(host):
-    """
-    Resolve hostname to IPv4 address.
-    """
     try:
         return socket.gethostbyname(host)
     except socket.gaierror:
@@ -31,18 +25,12 @@ def resolve_host(host):
 
 
 def block_ip(ip):
-    """
-    Block outbound traffic to IP using iptables.
-    """
-    subprocess.run(["sudo", "iptables", "-A", "OUTPUT", "-d", ip, "-j", "DROP"])
+    subprocess.run([HELPER_SCRIPT, "block", ip])
     with open(BLOCK_FILE, "a") as f:
         f.write(ip + "\n")
 
 
 def undo_blocks():
-    """
-    Remove previously added iptables rules.
-    """
     if not os.path.exists(BLOCK_FILE):
         print("No blocked records found.")
         return
@@ -50,10 +38,16 @@ def undo_blocks():
     with open(BLOCK_FILE, "r") as f:
         for ip in f:
             ip = ip.strip()
-            print(f"[+] Unblocking {ip}")
-            subprocess.run(["sudo", "iptables", "-D", "OUTPUT", "-d", ip, "-j", "DROP"])
+            subprocess.run([HELPER_SCRIPT, "unblock", ip])
 
     os.remove(BLOCK_FILE)
+
+
+def analyze_connections():
+    print("[+] Active TCP Connections:\n")
+    connections = get_active_connections()
+    for line in connections:
+        print(line)
 
 
 def main():
@@ -65,16 +59,13 @@ def main():
     choice = input("Select option: ")
 
     if choice == "1":
-        connections = get_active_connections()
-        print("[+] Active TCP connections:")
-        for line in connections:
-            print(line)
+        analyze_connections()
 
     elif choice == "2":
         undo_blocks()
 
     else:
-        sys.exit(0)
+        return
 
 
 if __name__ == "__main__":
