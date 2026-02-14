@@ -117,3 +117,39 @@ The tool:
 ## Core Workflow
 
 1. Capture DNS cache using:
+
+1. ipconfig /displaydns
+2. 2. Parse record names
+3. Resolve each domain to IPv4
+4. Inspect active TCP connections
+5. Identify Windows service-originated connections
+6. Create outbound firewall block rule
+7. Log blocked record
+8. Provide undo option to restore rules
+
+---
+
+## Skills Demonstrated
+
+- Windows API programming
+- Low-level networking inspection
+- COM interface interaction
+- Firewall rule management
+- Process enumeration
+- Memory management (BSTR handling, heap allocation)
+- TCP table inspection
+- DNS resolution handling
+- Structured C++ systems programming
+
+---
+
+## Technologies Used
+
+- C++
+- Win32 API
+- IP Helper API
+- WinDNS
+- Windows Firewall COM API
+- ToolHelp32 Snapshot API
+
+---
